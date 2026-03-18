@@ -10,6 +10,12 @@ class BaseAgent:
         self.logger = ReasoningLogger()
         self.tool_manager = ToolManager(tools or [])
 
+    def receive(self, sender, message):
+
+        print(f"\n[{self.name}] received message from {sender}")
+
+        return self.run(message)
+
     def build_prompt(self, task):
 
         tool_list = "\n".join(self.tool_manager.tools.keys())
@@ -46,7 +52,7 @@ Explain your reasoning briefly before answering.
 
         response = llm.generate(prompt)
 
-        self.logger.log(self.name, "Thinking about task...")
+        self.logger.log(self.name, response)
 
         if "TOOL:" in response:
 
@@ -80,8 +86,10 @@ Explain the result to the user clearly.
 
             print("\n[FINAL RESPONSE]\n")
             print(final_response)
+            return final_response
 
         else:
 
             print("\n[RESPONSE]\n")
             print(response)
+            return response
